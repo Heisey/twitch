@@ -15,13 +15,13 @@ function App() {
   return (
     <styles.Base className="App">
       <styles.Container>
-        <div>
-          <button>Twitch</button>
-        </div>
-        <div>
-          <button>Streams</button>
-          <button>Login</button>
-        </div>
+        <styles.Logo>
+          TWITCH
+        </styles.Logo>
+        <styles.NavContainer>
+          <styles.NavButton>Streams</styles.NavButton>
+          <styles.NavButton>Login</styles.NavButton>
+        </styles.NavContainer>
       </styles.Container>
       <Route path='/' exact component={StreamList} />
       <Route path='/streams/new' exact component={StreamCreate} />
