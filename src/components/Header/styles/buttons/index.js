@@ -18,3 +18,4 @@ export const NavLink = styled(Link)`
   color: white;
   text-decoration: none;
 `
+// window.gapi.auth2.getAuthInstance().signIn()

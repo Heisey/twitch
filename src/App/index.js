@@ -19,27 +19,7 @@ function App() {
   return (
     <styles.Base className="App">
       <BrowserRouter>
-        {/* // ~~ Header */}
         <Header />
-        {/* <styles.Container>
-          <styles.Logo>
-            <styles.NavLink
-              to='/'
-            >
-              TWITCH
-            </styles.NavLink>
-          </styles.Logo>
-          <styles.NavContainer>
-            <styles.NavButton>
-              <styles.NavLink
-                to='/streams/new'
-              >
-                Streams
-              </styles.NavLink>
-            </styles.NavButton>
-            <styles.NavButton>Login</styles.NavButton>
-          </styles.NavContainer>
-        </styles.Container> */}
 
       {/* // ~~ Route Hookup */}
         <Route path='/' exact component={StreamList} />
