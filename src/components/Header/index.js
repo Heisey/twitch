@@ -1,39 +1,50 @@
 import React, { useEffect, useState } from 'react'
+import { connect } from 'react-redux'
 
+import { actions } from '../../redux'
 import styles from './styles'
 
-const Header = () => {
-  const [auth, authHandler] = useState({})
-  const [signedIn, signedInHandler] = useState(null)
+const Header = (props) => {
+  const {
+    signIn,
+    signOut,
+    isSignedIn
+  } = props
+
+  // const [auth, authHandler] = useState({})
+  const [signedIn, signedInHandler] = useState(false)
+
+  const handleLogin = () => {
+    console.log('puppy click', isSignedIn)
+    if (isSignedIn) {
+      signIn()
+    } else if (isSignedIn === null) {
+      signIn()
+    } else {
+      signOut()
+    }
+  }
 
   useEffect(() => {
-    let authObj
+    console.log('puppies')
+    // let authObj
     window.gapi.load('client:auth2', () => {
       window.gapi.client.init({
         clientId: process.env.REACT_APP_OAUTH_CLIENT_ID,
         scope: 'email'
       }).then(() => {
-        authObj = window.gapi.auth2.getAuthInstance()
-        authHandler(authObj)
-      }).then(() => {
-        signedInHandler(authObj.isSignedIn.get())
-        authObj.isSignedIn.listen(() => {
-          signedInHandler(authObj.isSignedIn.get())
-        })
-      })
+        handleLogin(isSignedIn)
+        // authObj = window.gapi.auth2.getAuthInstance()
+        // authHandler(authObj)
+      })//.then(() => {
+    //     signedInHandler(authObj.isSignedIn.get())
+    //     authObj.isSignedIn.listen((isLoggedIn) => {
+    //       handleLogin(isLoggedIn)
+    //       signedInHandler(isLoggedIn)
+    //     })
+    //   })
     })
-  }, [])
-
-
-  const handleClick= () => {
-    if (signedIn) {
-      auth.signOut()
-    } else {
-      auth.signIn()
-    }
-  }
-
-  console.log(signedIn)
+  }, [handleLogin, isSignedIn])
 
   return (
     <styles.Base>
@@ -53,7 +64,7 @@ const Header = () => {
         </styles.NavLink>
       </styles.NavButton>
       <styles.NavButton
-        onClick={handleClick}
+        onClick={handleLogin}
       >
         {signedIn ? "LOGOUT" : 'LOGIN'}
       </styles.NavButton> 
@@ -62,4 +73,13 @@ const Header = () => {
   )
 }
 
-export default Header
+const mapStateToProps = (state) => {
+  return {
+    isSignedIn: state.auth.isSignedIn
+  }
+}
+
+export default connect(mapStateToProps, {
+  signIn: actions.signIn,
+  signOut: actions.signOut
+})(Header)
