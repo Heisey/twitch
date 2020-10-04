@@ -1,16 +1,18 @@
 
-import { 
-  Base
+import {
+  Base,
+  Container
 } from './base'
 
 import {
   Logo,
   NavButton,
   NavLink
-} from './nav'
+} from './buttons'
 
 export default {
   Base,
+  Container,
   Logo,
   NavButton,
   NavLink
