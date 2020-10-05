@@ -6,45 +6,45 @@ import styles from './styles'
 
 const Header = (props) => {
   const {
+    isSignedIn,
     signIn,
-    signOut,
-    isSignedIn
+    signOut
   } = props
 
-  // const [auth, authHandler] = useState({})
-  const [signedIn, signedInHandler] = useState(false)
-
-  const handleLogin = () => {
-    console.log('puppy click', isSignedIn)
-    if (isSignedIn) {
-      signIn()
-    } else if (isSignedIn === null) {
-      signIn()
-    } else {
-      signOut()
-    }
-  }
+  const [authApi, authApiHandler] = useState(null);
 
   useEffect(() => {
-    console.log('puppies')
-    // let authObj
+    const onAuthChange = (signedInStatus) => {
+      if (signedInStatus) {
+        signIn();
+      } else {
+        signOut();
+      }
+    }
+
     window.gapi.load('client:auth2', () => {
       window.gapi.client.init({
         clientId: process.env.REACT_APP_OAUTH_CLIENT_ID,
         scope: 'email'
-      }).then(() => {
-        handleLogin(isSignedIn)
-        // authObj = window.gapi.auth2.getAuthInstance()
-        // authHandler(authObj)
-      })//.then(() => {
-    //     signedInHandler(authObj.isSignedIn.get())
-    //     authObj.isSignedIn.listen((isLoggedIn) => {
-    //       handleLogin(isLoggedIn)
-    //       signedInHandler(isLoggedIn)
-    //     })
-    //   })
+      })
+      .then(() => {
+        window.gapi.auth2.getAuthInstance()
+        .then(authObj => {
+          authApiHandler(authObj)
+          onAuthChange(authObj.isSignedIn.get())
+          authObj.isSignedIn.listen(onAuthChange)
+        })
+      })
     })
-  }, [handleLogin, isSignedIn])
+  }, [isSignedIn, signIn, signOut])
+
+ const handleLogin = () => {
+   if (isSignedIn) {
+     authApi.signOut()
+   } else {
+     authApi.signIn()
+   }
+ }
 
   return (
     <styles.Base>
@@ -66,7 +66,7 @@ const Header = (props) => {
       <styles.NavButton
         onClick={handleLogin}
       >
-        {signedIn ? "LOGOUT" : 'LOGIN'}
+        {isSignedIn ? "LOGOUT" : 'LOGIN'}
       </styles.NavButton> 
     </styles.Container>
   </styles.Base>
@@ -75,7 +75,7 @@ const Header = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    isSignedIn: state.auth.isSignedIn
+      isSignedIn: state.auth.isSignedIn
   }
 }
 
