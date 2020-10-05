@@ -6,9 +6,12 @@ import styles from './styles'
 
 const Header = (props) => {
   const {
+    removeUserId,
     isSignedIn,
+    setUserId,
     signIn,
-    signOut
+    signOut,
+    userId
   } = props
 
   const [authApi, authApiHandler] = useState(null);
@@ -38,9 +41,20 @@ const Header = (props) => {
     })
   }, [isSignedIn, signIn, signOut])
 
+  useEffect(() => {
+    if (isSignedIn === null || !isSignedIn) {
+      return
+    }
+    
+    setUserId(authApi.currentUser.get().getId())
+    
+    console.log('user',authApi.currentUser.get().getId())
+  }, [isSignedIn, setUserId, authApi])
+
  const handleLogin = () => {
    if (isSignedIn) {
      authApi.signOut()
+     removeUserId()
    } else {
      authApi.signIn()
    }
@@ -67,6 +81,7 @@ const Header = (props) => {
         onClick={handleLogin}
       >
         {isSignedIn ? "LOGOUT" : 'LOGIN'}
+        {userId}
       </styles.NavButton> 
     </styles.Container>
   </styles.Base>
@@ -74,12 +89,16 @@ const Header = (props) => {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state)
   return {
-      isSignedIn: state.auth.isSignedIn
+      isSignedIn: state.auth.isSignedIn,
+      userId: state.auth.userId
   }
 }
 
 export default connect(mapStateToProps, {
+  removeUserId: actions.removeUserId,
+  setUserId: actions.setUserId,
   signIn: actions.signIn,
   signOut: actions.signOut
 })(Header)
